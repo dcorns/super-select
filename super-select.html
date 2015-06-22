@@ -1,0 +1,382 @@
+<!--
+@license
+Copyright (c) 2015 Dale Corns. All rights reserved.
+-->
+<link rel="import" href="../polymer/polymer.html">
+
+<!--
+An element providing selection list with subject filtering, selectable auto completion, list sizing, and visual data associations.
+
+Example:
+
+    <super-select></super-select>
+
+@demo
+-->
+<dom-module id="super-select">
+
+    <style>
+        :host {
+            display: block;
+            box-sizing: border-box;
+        }
+
+        .numToShow {
+            width: 30px;
+        }
+
+        .listStyle {
+            border: 3px gray solid;
+            width: 250px;
+            display: block;
+        }
+
+        ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            height: 100px;
+            display: block;
+            overflow-y: scroll;
+        }
+
+        .descStyle {
+            border: 3px black inset;
+        }
+
+    </style>
+    <template>
+        <content></content>
+        <section class="listStyle">
+            <section id="filters" on-click="filterclicked"></section>
+            <input id="searchTxt" on-keyup="searchTxtKeyUp" on-mouseenter="searchTxtMouseEnter"
+                   on-mouseout="searchTxtMouseOut" on-click="searchTxtClick" value="{{searchText::input}}">
+            <button id="btnPref" on-click="preferenceBtn">off</button>
+            <input on-change="listSize" class="numToShow" type="number" min="1" max="99" value="5">
+            <ul id="ssul" on-click="ulClicked"></ul>
+            <section id="ssdescript" class="descStyle"></section>
+        </section>
+    </template>
+
+</dom-module>
+
+<script>
+
+    Polymer({
+
+        is: 'super-select',
+
+        properties: {
+
+            itemlist: {
+                type: Array,
+                notify: true,
+                value: [],
+                observer: '_populateList'
+            },
+            associations: {
+                type: Array,
+                notify: true,
+                value: [],
+                observer: '_makeFilter'
+            },
+            displayitems: {
+                type: Array,
+                notify: true,
+                value: []
+            },
+            searchText: {
+                type: String,
+                notify: true,
+                value: '',
+                observer: '_search'
+            },
+            searchFactor: {
+                type: Number,
+                notify: true,
+                value: 0,
+                observer: '_searchFactorChanged'
+            },
+            numToShow: {
+                type: Number,
+                value: 5
+            },
+            totalItems: {
+                type: Number,
+                value: 0
+            },
+            lastItemIndex: {
+                type: Number,
+                value: 0
+            },
+            selectedItem: {
+                type: Object,
+                notify: true,
+                value: {}
+            },
+            filter: {
+                type: Array,
+                value: [],
+                notify: true,
+                observer: '_filterBySubject'
+            }
+        },
+        searchTxtClick: function (e) {
+            e.target.style.backgroundColor = 'white';
+        },
+        searchTxtMouseOut: function (e) {
+            e.target.style.backgroundColor = 'white';
+        },
+        searchTxtMouseEnter: function (e) {
+            e.target.style.backgroundColor = 'grey';
+        },
+        searchTxtKeyUp: function (e) {
+
+        },
+        preferenceBtn: function (e) {
+            var searchTxt = document.getElementById('searchTxt');
+            switch (this.searchFactor) {
+                case 0:
+                    this.searchFactor = 1;
+                    e.target.innerHTML = '1st';
+                    searchTxt.focus();
+                    break;
+                case 1:
+                    this.searchFactor = 2;
+                    e.target.innerHTML = 'all';
+                    searchTxt.focus();
+                    break;
+                case 3:
+                    this.searchFactor = 0;
+                    e.target.innerHTML = 'off';
+                    break;
+                default:
+                    this.searchFactor = 0;
+                    e.target.innerHTML = 'off';
+                    break;
+            }
+        },
+
+        ulClicked: function (e) {
+            //e.target.style.fontWeight = 'bolder';
+            this.selectedItem = e.target.innerHTML;
+        },
+
+        listSize: function (e) {
+            this.numToShow = e.target.value;
+            document.getElementById('ssul').style.height = (this.numToShow * 20).toString() + 'px';
+        },
+        _filterBySubject: function () {
+            var filter = this.filter, len2 = filter.length;
+            var domItems = document.getElementById('ssul').children;
+            var c = 0, len = domItems.length, showItem = true;
+            for (c; c < len; c++) {
+                if (len2 > 0) {
+                    var subjects = JSON.parse(domItems[c].dataset.subjects);
+                    var c2 = 0;
+                    showItem = false;
+                    for (c2; c2 < len2; c2++) {
+                        if (!(showItem)) {
+                            var c3 = 0, len3 = subjects.length;
+                            for (c3; c3 < len3; c3++) {
+                                if (filter[c2] === subjects[c3].toString()) {
+                                    showItem = true;
+                                    break;
+                                }
+                            }
+                        }
+                        else break;
+                    }
+                }
+                if (showItem) domItems[c].dataset['show'] = 'true';
+                else domItems[c].dataset['show'] = 'false';
+            }
+            this._search(this.searchText);
+        },
+        _search: function (e) {
+            var sf = this.searchFactor, c = 0;
+            var domItems = document.getElementById('ssul').children, len = domItems.length, showItem
+            if (sf > 0) {
+                var testText = e.toLocaleLowerCase(), itemText;
+                if (sf > 1) {
+                    for (c; c < len; c++) {
+                        showItem = domItems[c].dataset['show'];
+                        console.log(showItem);
+                        if (showItem === 'true') {
+                            itemText = domItems[c].textContent.toLocaleLowerCase();
+                            if (itemText.indexOf(testText) > -1) {
+                                domItems[c].hidden = false;
+                            }
+                            else {
+                                domItems[c].hidden = true;
+                            }
+                        }
+                        else {
+                            domItems[c].hidden = true;
+                        }
+                    }
+                }
+                else {
+                    var elen = testText.length;
+                    for (c; c < len; c++) {
+                        showItem = domItems[c].dataset['show'];
+                        console.log(showItem);
+                        if (showItem === 'true') {
+                            itemText = domItems[c].textContent.toLocaleLowerCase();
+                            if (itemText.slice(0, elen) === testText) {
+                                domItems[c].hidden = false;
+                            }
+                            else {
+                                domItems[c].hidden = true;
+                            }
+                        }
+                        else {
+                            domItems[c].hidden = true;
+                        }
+                    }
+                }
+            }
+            else {
+                for (c; c < len; c++) {
+                    showItem = domItems[c].dataset['show'];
+                    if (showItem === 'true') {
+                        domItems[c].hidden = false;
+                    }
+                    else {
+                        domItems[c].hidden = true;
+                    }
+                }
+            }
+        },
+        _populateList: function () {
+            if (this.displayitems && this.displayitems.length > 0) {
+                var len = this.itemlist.length, c = this.lastItemIndex, el, sSDescriptions = document.getElementById('ssdescript');
+                var titles = this.displayitems, items = this.itemlist, itemList = document.getElementById('ssul');
+                var extraTitles = titles.length > 1;
+                sSDescriptions.style.overflowX = 'scroll';
+                for (c; c < len; c++) {
+                    el = document.createElement('li');
+                    el.innerHTML = items[c][titles[0].prop];
+                    if (extraTitles) {
+                        var len2 = titles.length, c2 = 1;
+                        for (c2; c2 < len2; c2++) {
+                            el.setAttribute('data-' + titles[c2].prop, JSON.stringify({
+                                iData: items[c][titles[c2].prop],
+                                iTag: titles[c2].tag
+                            }));
+                        }
+                        el.addEventListener('mouseenter', function (e) {
+                            e.target.style.backgroundColor = 'grey';
+                            var data = e.target.dataset, p, lbl, txt;
+                            sSDescriptions.innerHTML = '';
+                            var liData;
+                            for (var prop in data) {
+                                if (data.hasOwnProperty(prop) && prop !== 'subjects' && prop !== 'show') {
+                                    liData = JSON.parse(data[prop]);
+                                    p = document.createElement('p');
+                                    p.style.margin = '0px';
+                                    lbl = document.createElement('h4');
+                                    lbl.style.margin = '0px';
+                                    lbl.innerHTML = prop.toString().toUpperCase() + ': ';
+                                    if (liData.iTag === 'a') {
+                                        txt = document.createElement(liData.iTag);
+                                        txt.setAttribute('href', liData.iData);
+                                    }
+                                    else {
+                                        txt = document.createElement(liData.iTag);
+                                    }
+                                    txt.innerHTML = liData.iData;
+                                    p.appendChild(lbl);
+                                    p.appendChild(txt);
+                                    sSDescriptions.appendChild(p);
+                                }
+                            }
+                        });
+                        el.addEventListener('mouseout', function (e) {
+                            e.target.style.backgroundColor = 'white';
+                        });
+                    }
+                    else {
+                        el.addEventListener('mouseenter', function (e) {
+                            e.target.style.backgroundColor = 'grey';
+                        });
+                        el.addEventListener('mouseout', function (e) {
+                            e.target.style.backgroundColor = 'white';
+                        });
+                    }
+                    itemList.appendChild(el);
+                }
+                if (extraTitles) {
+                    len = titles.length;
+                    c = 1;
+                    for (c; c < len; c++) {
+                        el = document.createElement('label');
+                        el.innerHTML = titles[c].prop;
+                        el.style.paddingRight = '10px';
+                        el.style.display = 'flex';
+                        sSDescriptions.appendChild(el);
+                        // sSDescriptions.appendChild(descData);
+                    }
+                }
+            }
+        },
+        _searchFactorChanged: function () {
+            var searchTxt = document.getElementById('searchTxt');
+            if (this.searchFactor > 0) {
+                this._search(searchTxt.value);
+            }
+            else {
+                searchTxt.value = '';
+                this._search(searchTxt.value);
+            }
+
+        },
+        _makeFilter: function () {
+            console.log('makefilter');
+            var filters = document.getElementById('filters'), len = this.associations.length, c = 1, cb, cblbl, id, name;
+            for (c; c < len; c++) {
+                id = this.associations[c].id;
+                name = this.associations[c].name;
+                cb = document.createElement('input');
+                cb.setAttribute('type', 'checkbox');
+                cb.setAttribute('data-id', id);
+                cb.setAttribute('id', 'cb' + id);
+                cb.setAttribute('value', id);
+                cb.title = name;
+                cblbl = document.createElement('label');
+                cblbl.setAttribute('for', 'cb' + id);
+                cblbl.innerHTML = name;
+                filters.appendChild(cb);
+                filters.appendChild(cblbl);
+                var aKey = this.associations[0]['appliesTo'], items = this.itemlist;
+                var domItems = document.getElementById('ssul').children;
+                var c2 = 0, len2 = domItems.length;
+                for (c2; c2 < len2; c2++) {
+                    domItems[c2].setAttribute('data-subjects', JSON.stringify(items[c2][aKey]));
+                    domItems[c2].setAttribute('data-show', 'true');
+                }
+            }
+        },
+        filterclicked: function (e) {
+            var addFilter = e.target.value;
+            if (e.target.checked) {
+                this.filter.push(addFilter);
+            }
+            else {
+                var c = 0, len = this.filter.length, idx = -1;
+                for (c; c < len; c++) {
+                    if (this.filter[c] === addFilter) {
+                        idx = c;
+                        break;
+                    }
+                }
+                if (idx > -1) {
+                    this.filter.splice(idx, 1);
+                }
+            }
+            this._filterBySubject();
+        }
+
+    });
+
+</script>
