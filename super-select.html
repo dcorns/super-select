@@ -8,13 +8,22 @@ Copyright (c) 2015 Dale Corns. All rights reserved.
 An element providing selection list with subject filtering, selectable auto completion, list sizing, and visual data associations.
 
 How to use:
+
 Drop the element in your html.
-Set the `associations` property to an array of subjects to be used for filtering the item list. The first object in the array needs to be called `appliesTo` and its value need to be a string matching the name of the property in `itemlist` objects that contains the array of subject ids. The rest of the objects need to contain a `name` property with value being a string to be displayed in the filter and a `tag` property that contains a string representing the element name to be used when rendering the `name` value. Note: the `name` value will be placed in the innerHTML of the element when rendered. Currently only the <a> element receives additional treatment. When `a` is the value of the tag property, in addition to putting the `name` value in the innerHTML, it will also be used for the `href` attribute.
-Set the `itemlist` property to an array of objects containing the data you want it to contain. The first property value in each object will be used as the selection option text. This will also be the value stored in `selectedItem` when a list item is clicked. Each object also requires property containing an array of strings representing the id's of the subjects associated with the object data.
-Set the
+
+Assign these properties in the order shown:
+
+Set the `displayitems` property to an array of objects with a `prop` property who's value is a string equal to the property name in itemlist objects that you want to display and a `tag` property who's value is a string representing the element name to be used when rendering the property from itemlist. Note: the itemlist property value will be placed in the innerHTML of the element when rendered. Currently only the `<a>` element receives additional treatment. When `a` is the value of the tag property, in addition to putting the property value in the innerHTML, it will also be used for the `href` attribute.
+
+Set the `associations` property to an array of objects to be used for filtering the item list. The first object in the array needs to be called `appliesTo` and its value need to be a string matching the name of the property in `itemlist` objects that contains the array of subject ids. The rest of the objects need to contain a `name` property with the value being a string to be displayed in the filter and an `id` property who's value is a string representing the id of the subject. The subject id must be the same id that is used in the itemlist objects to associate the itemlist object.
+
+Set the `itemlist` property to an array of objects containing all the select data that you want passed to super select. The first property value in each object will be used as the selection option text. This will also be the value stored in `selectedItem` when a list item is clicked. Each object also requires a property containing an array of strings representing the id's of the subjects associated with the object data.
+
 Example:
 
     <super-select></super-select>
+
+See demo/index.html for an example of how to structure the object arrays.
 
 @demo
 -->
