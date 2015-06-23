@@ -10,7 +10,7 @@ install that via:
 
     npm install -g bower
 
-Then, go ahead and download the super-select dependencies:
+Then, go ahead and install super-select:
 
     bower install dcorns/super-select
     
