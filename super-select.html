@@ -17,13 +17,29 @@ An element providing selection list with subject filtering, selectable auto comp
 
 At a minimum you must set the `itemlist` property of super-select to an object array where each object has at least one key/value pair. Then you will need to set the `displayitems` property of super-select to an array with a single object containing the property name `prop` who's value is a string representation of the the key name of the objects in `itemlist` who's value will be used as the list item text.
 
+In this example the selection list will display the phone number of each object in this `itemlist` array.
+
 `document.querySelector('super-select').itemlist = [{name: 'Ivan Oats', age: 37, phone: '(555) 555-5555'}...];`
 
 `document.querySelector('super-select').displayitems = [{prop: 'phone'}];`
 
-In the previous example the selection list will display the phone number of each object in this `itemlist` array.
+###Multibound synchronized data presentation
 
-Assign these properties in the order shown:
+This allows you to display addition data that is synchronized with the list items on hover and selected.
+
+Configuration requires additional objects to be added to the `displayitems` array. Unlike the first object, each additional object must be of the form `{prop: value, tag: tagName}` Where the `prop` value is a valid property name contained in the `itemlist` array objects. And `tag` is a string representing a valid HTML element capable of having its innerHTML property set. There is currently one element that receives special attention when specified in `tag`, that is the `<a>`. When `a` is the value of the `tag` property. The value of the corresponding property from each listitem object is used for the innerHTML and the href attribute.
+
+In this example the values of the `age` and `phone` properties corresponding to a given item in itemlist will be displayed in span tags along with it.
+
+`document.querySelector('super-select').itemlist = [{name: 'Ivan Oats', age: 37, phone: '(555) 555-5555'}...];`
+
+`document.querySelector('super-select').displayitems = [{prop: 'phone'}, {prop: 'name', tag: 'span'}, {prop: 'age', tag: 'span'];`
+
+###Using subject filters:
+
+To use subject filtering, must add a property for storing an array of strings. The array for a given object will be the subject ids to which it is to be associated.
+
+The super-select associations property must be set to an array of objects that define the subject names and ids.
 
 Set the `displayitems` property to an array of objects with a `prop` property who's value is a string equal to the property name in itemlist objects that you want to display and a `tag` property who's value is a string representing the element name to be used when rendering the property from itemlist. Note: the itemlist property value will be placed in the innerHTML of the element when rendered. Currently only the `<a>` element receives additional treatment. When `a` is the value of the tag property, in addition to putting the property value in the innerHTML, it will also be used for the `href` attribute.
 
