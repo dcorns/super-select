@@ -37,15 +37,14 @@ In this example the values of the `age` and `phone` properties corresponding to 
 
 ###Using subject filters:
 
-To use subject filtering, must add a property for storing an array of strings. The array for a given object will be the subject ids to which it is to be associated.
+To use subject filtering, you must add an `itemlist` property for storing an array of strings. The array for a given object will be the subject ids to which it is to be associated. You must also set the associations property of super-select to an array of objects containing subject name and subject id's
 
-The super-select associations property must be set to an array of objects that define the subject names and ids.
+The following example adds the subjects of friend, acquaintance, family, and client. The item with the name 'Ivan Oates' is then associated with friend and client. Note that the first object in associations must be of the form {appliesTo: property in `itemlist` that contains the subject id array}
 
-Set the `displayitems` property to an array of objects with a `prop` property who's value is a string equal to the property name in itemlist objects that you want to display and a `tag` property who's value is a string representing the element name to be used when rendering the property from itemlist. Note: the itemlist property value will be placed in the innerHTML of the element when rendered. Currently only the `<a>` element receives additional treatment. When `a` is the value of the tag property, in addition to putting the property value in the innerHTML, it will also be used for the `href` attribute.
+`document.querySelector('super-select').association = [{appliesTo: 'categories'}, {name: 'friend', id:1}, {name: 'acquaintance', id: 2}, {name: ], id: 3}, {name: 'client'}]`
 
-Set the `associations` property to an array of objects to be used for filtering the item list. The first object in the array needs to be called `appliesTo` and its value need to be a string matching the name of the property in `itemlist` objects that contains the array of subject ids. The rest of the objects need to contain a `name` property with the value being a string to be displayed in the filter and an `id` property who's value is a string representing the id of the subject. The subject id must be the same id that is used in the itemlist objects to associate the itemlist object.
+`document.querySelector('super-select').itemlist = [{name: 'Ivan Oats', age: 37, phone: '(555) 555-5555', categories: [1, 4]}...];`
 
-Set the `itemlist` property to an array of objects containing all the select data that you want passed to super select. The first property value in each object will be used as the selection option text. This will also be the value stored in `selectedItem` when a list item is clicked. Each object also requires a property containing an array of strings representing the id's of the subjects associated with the object data.
 
 Example:
 
