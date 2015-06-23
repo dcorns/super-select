@@ -1,0 +1,39 @@
+{
+  "name": "super-select",
+  "authors": [
+    "Dale Corns <codefellow@gmail.com>"
+  ],
+  "description": "An element providing extensions to select.",
+  "keywords": [
+    "web-component",
+    "web-components",
+    "polymer",
+    "super",
+    "select"
+  ],
+  "main": "super-select.html",
+  "license": "http://polymer.github.io/LICENSE.txt",
+  "homepage": "https://github.com/dcorns/super-select/",
+  "ignore": [
+    "/.*",
+    "/test/",
+    "/demo/"
+  ],
+  "dependencies": {
+    "polymer": "Polymer/polymer#^1.0.0"
+  },
+  "devDependencies": {
+    "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
+    "web-component-tester": "*"
+  },
+  "_release": "84a83c0e5c",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "84a83c0e5cea2afd641a91cf803034ae0e27d6a5"
+  },
+  "_source": "git://github.com/dcorns/super-select.git",
+  "_target": "master",
+  "_originalSource": "dcorns/super-select",
+  "_direct": true
+}

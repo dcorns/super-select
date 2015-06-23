@@ -1,0 +1,438 @@
+<!--
+@license
+Copyright (c) 2015 Dale Corns. All rights reserved.
+-->
+<link rel="import" href="../polymer/polymer.html">
+
+<!--
+An element providing selection list with subject filtering, selectable auto completion, list sizing, and visual data associations.
+
+##How to use:
+
+###Drop the element in your html.
+
+`<super-select></super-select>`
+
+###Minimal use which will provide the auto complete and size by number functionality:
+
+At a minimum you must set the `itemlist` property of super-select to an object array where each object has at least one key/value pair. Then you will need to set the `displayitems` property of super-select to an array with a single object containing the property name `prop` who's value is a string representation of the the key name of the objects in `itemlist` who's value will be used as the list item text.
+
+In this example the selection list will display the phone number of each object in this `itemlist` array.
+
+`document.querySelector('super-select').itemlist = [{name: 'Ivan Oats', age: 37, phone: '(555) 555-5555'}...];`
+
+`document.querySelector('super-select').displayitems = [{prop: 'phone'}];`
+
+###Multibound synchronized data presentation
+
+This allows you to display addition data that is synchronized with the list items on hover and selected.
+
+Configuration requires additional objects to be added to the `displayitems` array. Unlike the first object, each additional object must be of the form `{prop: value, tag: tagName}` Where the `prop` value is a valid property name contained in the `itemlist` array objects. And `tag` is a string representing a valid HTML element capable of having its innerHTML property set. There is currently one element that receives special attention when specified in `tag`, that is the `<a>`. When `a` is the value of the `tag` property. The value of the corresponding property from each listitem object is used for the innerHTML and the href attribute.
+
+In this example the values of the `age` and `phone` properties corresponding to a given item in itemlist will be displayed in span tags along with it.
+
+`document.querySelector('super-select').itemlist = [{name: 'Ivan Oats', age: 37, phone: '(555) 555-5555'}...];`
+
+`document.querySelector('super-select').displayitems = [{prop: 'phone'}, {prop: 'name', tag: 'span'}, {prop: 'age', tag: 'span'];`
+
+###Using subject filters:
+
+To use subject filtering, you must add an `itemlist` property for storing an array of strings. The array for a given object will be the subject ids to which it is to be associated. You must also set the associations property of super-select to an array of objects containing subject name and subject id's
+
+The following example adds the subjects of friend, acquaintance, family, and client. The item with the name 'Ivan Oates' is then associated with friend and client. Note that the first object in associations must be of the form {appliesTo: property in `itemlist` that contains the subject id array}
+
+`document.querySelector('super-select').association = [{appliesTo: 'categories'}, {name: 'friend', id:1}, {name: 'acquaintance', id: 2}, {name: ], id: 3}, {name: 'client'}]`
+
+`document.querySelector('super-select').itemlist = [{name: 'Ivan Oats', age: 37, phone: '(555) 555-5555', categories: [1, 4]}...];`
+
+
+Example:
+
+    <super-select></super-select>
+
+See demo/index.html for an example of how to structure the object arrays.
+
+@demo
+-->
+<dom-module id="super-select">
+
+    <style>
+        :host {
+            display: block;
+            box-sizing: border-box;
+        }
+
+        .numToShow {
+            width: 30px;
+        }
+
+        .listStyle {
+            border: 3px gray solid;
+            width: 250px;
+            display: block;
+        }
+
+        ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            height: 100px;
+            display: block;
+            overflow-y: scroll;
+        }
+
+        .descStyle {
+            border: 3px black inset;
+            overflow-x: scroll;
+        }
+
+    </style>
+    <template>
+        <content></content>
+        <section class="listStyle">
+            <section id="filters" on-click="filterclicked"></section>
+            <input id="searchTxt" on-mouseenter="searchTxtMouseEnter" on-mouseout="searchTxtMouseOut" on-click="searchTxtClick" value="{{searchText::input}}">
+            <button id="btnPref" on-click="preferenceBtn">off</button>
+            <input on-change="listSize" class="numToShow" type="number" min="1" max="99" value="5">
+            <ul id="ssul" on-click="ulClicked"></ul>
+            <section id="ssdescript" class="descStyle"></section>
+        </section>
+    </template>
+
+</dom-module>
+
+<script>
+
+    Polymer({
+
+        is: 'super-select',
+
+        properties: {
+            //Main selection array: expects an java script array of java script objects [{key:value,....},{...},{key:[array of strings or integers matching the id's of each object in the associations array]], the firs key/value pair in each object is used as the selection list item.
+            itemlist: {
+                type: Array,
+                notify: true,
+                value: [],
+                observer: '_populateList'
+            },
+            //A mapping array containing the property names of the additional data to be displayed when the key data is hovered or selected. It must be configured like this [{appliesTo:(name of the key in itemlist that stores the association array for each item)}, {name:subject, id:id}...]
+            associations: {
+                type: Array,
+                notify: true,
+                value: [],
+                observer: '_makeFilter'
+            },
+            //Expects a JavaScript object array of itemlist property and tag name pairs where the tag name is a valid html tag for storing text inside it's innerHTML. Only one exception is currently available; the 'a' tag. When the 'a' tag is used, the value of the property in itemlist will be used for href the anchor element as well as the innerHTML.
+            displayitems: {
+                type: Array,
+                notify: true,
+                value: []
+            },
+            //Stores the value attribute of the auto complete
+            searchText: {
+                type: String,
+                notify: true,
+                value: '',
+                observer: '_search'
+            },
+            //Tracks the clicks on the auto complete button 0=none 1=1st characters 2=characters anywhere
+            searchFactor: {
+                type: Number,
+                notify: true,
+                value: 0,
+                observer: '_searchFactorChanged'
+            },
+            //This stores the height base of the list window to display approximately 1 item per unit
+            numToShow: {
+                type: Number,
+                value: 5
+            },
+            //This stores the length of items in the itemlist array
+            totalItems: {
+                type: Number,
+                value: 0
+            },
+            //This stores the last item index selected from itemlist array
+            lastItemIndex: {
+                type: Number,
+                value: 0
+            },
+            //This stores the selected itemlist text
+            selectedItem: {
+                type: String,
+                notify: true,
+                value: ''
+            },
+            //This stores the current list of checked subject id's
+            filter: {
+                type: Array,
+                value: [],
+                notify: true,
+                observer: '_filterBySubject'
+            }
+        },
+        //Styles the auto complete input box on click
+        searchTxtClick: function (e) {
+            e.target.style.backgroundColor = 'white';
+        },
+        //Styles the list items on mouse out
+        searchTxtMouseOut: function (e) {
+            e.target.style.backgroundColor = 'white';
+        },
+        //Styles the list items on mouse enter
+        searchTxtMouseEnter: function (e) {
+            e.target.style.backgroundColor = 'grey';
+        },
+        //Controls the handling of the auto complete button clicks
+        preferenceBtn: function (e) {
+            var searchTxt = document.getElementById('searchTxt');
+            switch (this.searchFactor) {
+                case 0:
+                    this.searchFactor = 1;
+                    e.target.innerHTML = '1st';
+                    searchTxt.focus();
+                    break;
+                case 1:
+                    this.searchFactor = 2;
+                    e.target.innerHTML = 'all';
+                    searchTxt.focus();
+                    break;
+                case 3:
+                    this.searchFactor = 0;
+                    e.target.innerHTML = 'off';
+                    break;
+                default:
+                    this.searchFactor = 0;
+                    e.target.innerHTML = 'off';
+                    break;
+            }
+        },
+        //handles the list item click events
+        ulClicked: function (e) {
+            this.selectedItem = e.target.innerHTML;
+        },
+        //calculates and executes height changes of the item list based on the number input
+        listSize: function (e) {
+            this.numToShow = e.target.value;
+            document.getElementById('ssul').style.height = (this.numToShow * 20).toString() + 'px';
+        },
+        //called when filter selection changes and sets the show attribute of the list items based on selected filters and then calls _search
+        _filterBySubject: function () {
+            var filter = this.filter, len2 = filter.length;
+            var domItems = document.getElementById('ssul').children;
+            var c = 0, len = domItems.length, showItem = true;
+            for (c; c < len; c++) {
+                if (len2 > 0) {
+                    var subjects = JSON.parse(domItems[c].dataset.subjects);
+                    var c2 = 0;
+                    showItem = false;
+                    for (c2; c2 < len2; c2++) {
+                        if (!(showItem)) {
+                            var c3 = 0, len3 = subjects.length;
+                            for (c3; c3 < len3; c3++) {
+                                if (filter[c2] === subjects[c3].toString()) {
+                                    showItem = true;
+                                    break;
+                                }
+                            }
+                        }
+                        else break;
+                    }
+                }
+                if (showItem) domItems[c].dataset['show'] = 'true';
+                else domItems[c].dataset['show'] = 'false';
+            }
+            this._search(this.searchText);
+        },
+        //called by filterBySubject and when the auto complete text changes: Sets the visibilty of list items based on auto complete settings, auto complete text and filter selections
+        _search: function (e) {
+            var sf = this.searchFactor, c = 0;
+            var domItems = document.getElementById('ssul').children, len = domItems.length, showItem;
+            if (sf > 0) {
+                var testText = e.toLocaleLowerCase(), itemText;
+                if (sf > 1) {
+                    for (c; c < len; c++) {
+                        showItem = domItems[c].dataset['show'];
+                        if (showItem === 'true') {
+                            itemText = domItems[c].textContent.toLocaleLowerCase();
+                            if (itemText.indexOf(testText) > -1) {
+                                domItems[c].hidden = false;
+                            }
+                            else {
+                                domItems[c].hidden = true;
+                            }
+                        }
+                        else {
+                            domItems[c].hidden = true;
+                        }
+                    }
+                }
+                else{
+                    var elen = testText.length;
+                    for (c; c < len; c++) {
+                        showItem = domItems[c].dataset['show'];
+                        if (showItem === 'true') {
+                            itemText = domItems[c].textContent.toLocaleLowerCase();
+                            if (itemText.slice(0, elen) === testText) {
+                                domItems[c].hidden = false;
+                            }
+                            else {
+                                domItems[c].hidden = true;
+                            }
+                        }
+                        else {
+                            domItems[c].hidden = true;
+                        }
+                    }
+                }
+            }
+            else {
+                for (c; c < len; c++) {
+                    showItem = domItems[c].dataset['show'];
+                    if (showItem === 'true') {
+                        domItems[c].hidden = false;
+                    }
+                    else {
+                        domItems[c].hidden = true;
+                    }
+                }
+            }
+        },
+        //performs initial element setup
+        _populateList: function () {
+            if (this.itemlist.length > 0) {
+                var items = this.itemlist, len = items.length, c = this.lastItemIndex, el, sSDescriptions = document.getElementById('ssdescript'), itemList = document.getElementById('ssul');
+                var titles = this.displayitems;
+                var extraTitles = titles.length > 1;
+                for (c; c < len; c++) {
+                    el = document.createElement('li');
+                    el.setAttribute('data-show', 'true');
+                    el.innerHTML = items[c][titles[0].prop];
+                    if (extraTitles) {
+                        var len2 = titles.length, c2 = 1;
+                        for (c2; c2 < len2; c2++) {
+                            el.setAttribute('data-' + titles[c2].prop, JSON.stringify({
+                                iData: items[c][titles[c2].prop],
+                                iTag: titles[c2].tag
+                            }));
+                        }
+                        el.addEventListener('mouseenter', function (e) {
+                            e.target.style.backgroundColor = 'grey';
+                            var data = e.target.dataset, p, lbl, txt;
+                            sSDescriptions.innerHTML = '';
+                            var liData;
+                            for (var prop in data) {
+                                if (data.hasOwnProperty(prop) && prop !== 'subjects' && prop !== 'show') {
+                                    liData = JSON.parse(data[prop]);
+                                    p = document.createElement('p');
+                                    p.style.margin = '0px';
+                                    lbl = document.createElement('h4');
+                                    lbl.style.margin = '0px';
+                                    lbl.innerHTML = prop.toString().toUpperCase() + ': ';
+                                    if (liData.iTag === 'a') {
+                                        txt = document.createElement(liData.iTag);
+                                        txt.setAttribute('href', liData.iData);
+                                    }
+                                    else {
+                                        txt = document.createElement(liData.iTag);
+                                    }
+                                    txt.innerHTML = liData.iData;
+                                    p.appendChild(lbl);
+                                    p.appendChild(txt);
+                                    sSDescriptions.appendChild(p);
+                                }
+                            }
+                        });
+                        el.addEventListener('mouseout', function (e) {
+                            e.target.style.backgroundColor = 'white';
+                        });
+                    }
+                    else {
+                        el.addEventListener('mouseenter', function (e) {
+                            e.target.style.backgroundColor = 'grey';
+                        });
+                        el.addEventListener('mouseout', function (e) {
+                            e.target.style.backgroundColor = 'white';
+                        });
+                        sSDescriptions.hidden=true;
+                    }
+                    itemList.appendChild(el);
+                }
+                if (extraTitles) {
+                    len = titles.length;
+                    c = 1;
+                    for (c; c < len; c++) {
+                        el = document.createElement('label');
+                        el.innerHTML = titles[c].prop;
+                        el.style.paddingRight = '10px';
+                        el.style.display = 'flex';
+                        sSDescriptions.appendChild(el);
+                    }
+                }
+            }
+            else{
+               // this.innerHTML = 'super-select requires the itemlist property to contain an object array';
+            }
+        },
+        //Handles state changes of the search text
+        _searchFactorChanged: function () {
+            var searchTxt = document.getElementById('searchTxt');
+            if (this.searchFactor > 0) {
+                this._search(searchTxt.value);
+            }
+            else {
+                searchTxt.value = '';
+                this._search(searchTxt.value);
+            }
+
+        },
+        //Creates the subject filter elements
+        _makeFilter: function () {
+            var filters = document.getElementById('filters'), len = this.associations.length, c = 1, cb, cblbl, id, name;
+            for (c; c < len; c++) {
+                id = this.associations[c].id;
+                name = this.associations[c].name;
+                cb = document.createElement('input');
+                cb.setAttribute('type', 'checkbox');
+                cb.setAttribute('data-id', id);
+                cb.setAttribute('id', 'cb' + id);
+                cb.setAttribute('value', id);
+                cb.title = name;
+                cblbl = document.createElement('label');
+                cblbl.setAttribute('for', 'cb' + id);
+                cblbl.innerHTML = name;
+                filters.appendChild(cb);
+                filters.appendChild(cblbl);
+                var aKey = this.associations[0]['appliesTo'], items = this.itemlist;
+                var domItems = document.getElementById('ssul').children;
+                var c2 = 0, len2 = domItems.length;
+                for (c2; c2 < len2; c2++) {
+                    domItems[c2].setAttribute('data-subjects', JSON.stringify(items[c2][aKey]));
+                    domItems[c2].setAttribute('data-show', 'true');
+                }
+            }
+        },
+        //Sets up the filters when they change
+        filterclicked: function (e) {
+            var addFilter = e.target.value;
+            if (e.target.checked) {
+                this.filter.push(addFilter);
+            }
+            else {
+                var c = 0, len = this.filter.length, idx = -1;
+                for (c; c < len; c++) {
+                    if (this.filter[c] === addFilter) {
+                        idx = c;
+                        break;
+                    }
+                }
+                if (idx > -1) {
+                    this.filter.splice(idx, 1);
+                }
+            }
+            this._filterBySubject();
+        }
+
+    });
+
+</script>
