@@ -209,7 +209,6 @@ See demo/index.html for an example of how to structure the object arrays.
         },
         //handles the list item click events
         ulClicked: function (e) {
-            //e.target.style.fontWeight = 'bolder';
             this.selectedItem = e.target.innerHTML;
         },
         //calculates and executes height changes of the item list based on the number input
@@ -272,7 +271,6 @@ See demo/index.html for an example of how to structure the object arrays.
                     var elen = testText.length;
                     for (c; c < len; c++) {
                         showItem = domItems[c].dataset['show'];
-                        console.log(showItem);
                         if (showItem === 'true') {
                             itemText = domItems[c].textContent.toLocaleLowerCase();
                             if (itemText.slice(0, elen) === testText) {
@@ -378,7 +376,6 @@ See demo/index.html for an example of how to structure the object arrays.
         },
         //Handles state changes of the search text
         _searchFactorChanged: function () {
-            console.log('searchFactor');
             var searchTxt = document.getElementById('searchTxt');
             if (this.searchFactor > 0) {
                 this._search(searchTxt.value);
@@ -391,7 +388,6 @@ See demo/index.html for an example of how to structure the object arrays.
         },
         //Creates the subject filter elements
         _makeFilter: function () {
-            console.log('makefilter');
             var filters = document.getElementById('filters'), len = this.associations.length, c = 1, cb, cblbl, id, name;
             for (c; c < len; c++) {
                 id = this.associations[c].id;
