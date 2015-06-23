@@ -7,9 +7,21 @@ Copyright (c) 2015 Dale Corns. All rights reserved.
 <!--
 An element providing selection list with subject filtering, selectable auto completion, list sizing, and visual data associations.
 
-How to use:
+##How to use:
 
-Drop the element in your html.
+###Drop the element in your html.
+
+`<super-select></super-select>`
+
+###Minimal use which will provide the auto complete and size by number functionality:
+
+At a minimum you must set the `itemlist` property of super-select to an object array where each object has at least one key/value pair. Then you will need to set the `displayitems` property of super-select to an array with a single object containing the property name `prop` who's value is a string representation of the the key name of the objects in `itemlist` who's value will be used as the list item text.
+
+`document.querySelector('super-select').itemlist = [{name: 'Ivan Oats', age: 37, phone: '(555) 555-5555'}...];`
+
+`document.querySelector('super-select').displayitems = [{prop: 'phone'}];`
+
+In the previous example the selection list will display the phone number of each object in this `itemlist` array.
 
 Assign these properties in the order shown:
 
@@ -56,6 +68,7 @@ See demo/index.html for an example of how to structure the object arrays.
 
         .descStyle {
             border: 3px black inset;
+            overflow-x: scroll;
         }
 
     </style>
@@ -63,8 +76,7 @@ See demo/index.html for an example of how to structure the object arrays.
         <content></content>
         <section class="listStyle">
             <section id="filters" on-click="filterclicked"></section>
-            <input id="searchTxt" on-keyup="searchTxtKeyUp" on-mouseenter="searchTxtMouseEnter"
-                   on-mouseout="searchTxtMouseOut" on-click="searchTxtClick" value="{{searchText::input}}">
+            <input id="searchTxt" on-mouseenter="searchTxtMouseEnter" on-mouseout="searchTxtMouseOut" on-click="searchTxtClick" value="{{searchText::input}}">
             <button id="btnPref" on-click="preferenceBtn">off</button>
             <input on-change="listSize" class="numToShow" type="number" min="1" max="99" value="5">
             <ul id="ssul" on-click="ulClicked"></ul>
@@ -221,13 +233,12 @@ See demo/index.html for an example of how to structure the object arrays.
         //called by filterBySubject and when the auto complete text changes: Sets the visibilty of list items based on auto complete settings, auto complete text and filter selections
         _search: function (e) {
             var sf = this.searchFactor, c = 0;
-            var domItems = document.getElementById('ssul').children, len = domItems.length, showItem
+            var domItems = document.getElementById('ssul').children, len = domItems.length, showItem;
             if (sf > 0) {
                 var testText = e.toLocaleLowerCase(), itemText;
                 if (sf > 1) {
                     for (c; c < len; c++) {
                         showItem = domItems[c].dataset['show'];
-                        console.log(showItem);
                         if (showItem === 'true') {
                             itemText = domItems[c].textContent.toLocaleLowerCase();
                             if (itemText.indexOf(testText) > -1) {
@@ -242,7 +253,7 @@ See demo/index.html for an example of how to structure the object arrays.
                         }
                     }
                 }
-                else {
+                else{
                     var elen = testText.length;
                     for (c; c < len; c++) {
                         showItem = domItems[c].dataset['show'];
@@ -276,13 +287,13 @@ See demo/index.html for an example of how to structure the object arrays.
         },
         //performs initial element setup
         _populateList: function () {
-            if (this.displayitems && this.displayitems.length > 0) {
-                var len = this.itemlist.length, c = this.lastItemIndex, el, sSDescriptions = document.getElementById('ssdescript');
-                var titles = this.displayitems, items = this.itemlist, itemList = document.getElementById('ssul');
+            if (this.itemlist.length > 0) {
+                var items = this.itemlist, len = items.length, c = this.lastItemIndex, el, sSDescriptions = document.getElementById('ssdescript'), itemList = document.getElementById('ssul');
+                var titles = this.displayitems;
                 var extraTitles = titles.length > 1;
-                sSDescriptions.style.overflowX = 'scroll';
                 for (c; c < len; c++) {
                     el = document.createElement('li');
+                    el.setAttribute('data-show', 'true');
                     el.innerHTML = items[c][titles[0].prop];
                     if (extraTitles) {
                         var len2 = titles.length, c2 = 1;
@@ -330,6 +341,7 @@ See demo/index.html for an example of how to structure the object arrays.
                         el.addEventListener('mouseout', function (e) {
                             e.target.style.backgroundColor = 'white';
                         });
+                        sSDescriptions.hidden=true;
                     }
                     itemList.appendChild(el);
                 }
@@ -342,13 +354,16 @@ See demo/index.html for an example of how to structure the object arrays.
                         el.style.paddingRight = '10px';
                         el.style.display = 'flex';
                         sSDescriptions.appendChild(el);
-                        // sSDescriptions.appendChild(descData);
                     }
                 }
+            }
+            else{
+               // this.innerHTML = 'super-select requires the itemlist property to contain an object array';
             }
         },
         //Handles state changes of the search text
         _searchFactorChanged: function () {
+            console.log('searchFactor');
             var searchTxt = document.getElementById('searchTxt');
             if (this.searchFactor > 0) {
                 this._search(searchTxt.value);

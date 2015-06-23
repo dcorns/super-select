@@ -36,16 +36,15 @@ Copyright (c) 2015 Dale Corns
         , {title: 'BigO Cheet Sheet', description: 'Algorithm efficiency chart', link: 'http://bigocheatsheet.com/', appliesTo: [4]}
         , {title: ' Introduction to Object-Oriented JavaScript', description: 'Online Article', link: 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Introduction_to_Object-Oriented_JavaScript', appliesTo: [5]}
         , {title: 'Code Wars', description: 'Code challenge site', link: 'http://www.codewars.com/', appliesTo: [3, 4, 5]}
-        , {title: 'Introduction to Object-Oriented JavaScript', description: 'Online Article', link: 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Introduction_to_Object-Oriented_JavaScript', appliesTo: [5]}
         , {title: 'Linux Command Line Cheat Sheet by DaveChild', description: 'Online Documentation', link: ' http://www.cheatography.com/davechild/cheat-sheets/linux-command-line/', appliesTo: [6]}
         , {title: 'Get Acquainted with Git', description: 'Video workshop', link: 'http://teamtreehouse.com/library/get-acquainted-with-git', appliesTo: [7]}
         , {title: '12 Free Books for Learning Theoretical Computer Science', description: 'Book List', link: ' http://codecondo.com/free-books-theoretical-computer-science/', appliesTo: [8]}
       ];
       var associationarray = [{appliesTo: 'appliesTo'}, {name: 'HTML', id: 1}, {name: 'CSS', id: 2}, {name: 'JavaScript', id: 3}, {name: 'Data & Algorithms', id: 4}, {name: 'OOP', id: 5}, {name: 'Terminal/Console', id: 6}, {name: 'GIT', id: 7}, {name: 'General', id: 8}];
-      var displaydata = [{prop: 'title', tag: 'label'}, {prop: 'description', tag: 'label'}, {prop: 'link', tag: 'a'}];
-      document.querySelector('super-select').displayitems = displaydata;
+      var displaydata = [{prop: 'title'}, {prop: 'description', tag: 'label'}, {prop: 'link', tag: 'a'}];
+      document.querySelector('super-select').displayitems = [{prop:'title'}];
       document.querySelector('super-select').itemlist = anobjectarray;
-      document.querySelector('super-select').associations = associationarray;
+//      document.querySelector('super-select').associations = associationarray;
     </script>
   </body>
 </html>
