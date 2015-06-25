@@ -17,7 +17,7 @@ Copyright (c) 2015 Dale Corns
 
     <button>Show Selected</button>
 
-    <super-select data-itemlist="anobjectarray"></super-select>
+    <super-select></super-select>
 
     <script>
       document.querySelector('button').addEventListener('click', function() {
@@ -43,7 +43,7 @@ Copyright (c) 2015 Dale Corns
       var associationarray = [{appliesTo: 'appliesTo'}, {name: 'HTML', id: 1}, {name: 'CSS', id: 2}, {name: 'JavaScript', id: 3}, {name: 'Data & Algorithms', id: 4}, {name: 'OOP', id: 5}, {name: 'Terminal/Console', id: 6}, {name: 'GIT', id: 7}, {name: 'General', id: 8}];
       var displaydata = [{prop: 'title'}, {prop: 'description', tag: 'label'}, {prop: 'link', tag: 'a'}];
      // document.querySelector('super-select').displayitems = [9];
-     // document.querySelector('super-select').itemlist = 'a string';
+      document.querySelector('super-select').itemlist = anobjectarray;
    //   document.querySelector('super-select').associations = associationarray;
     </script>
   </body>

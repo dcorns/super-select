@@ -85,9 +85,16 @@ See demo/index.html for an example of how to structure the object arrays.
             border: 3px black inset;
             overflow-x: scroll;
         }
+        #lblError{
+            border: 3px red inset;
+            width: 200px;
+            display: inline-block;
+            background-color: #e1bee7;
+        }
 
     </style>
     <template>
+        <lable id="lblError"></lable>
         <content></content>
         <section class="listStyle" id="ss">
             <section id="filters" on-click="filterclicked"></section>
@@ -172,7 +179,9 @@ See demo/index.html for an example of how to structure the object arrays.
         },
 
         ready: function(){
-          console.dir(window[this.dataset.itemlist]);
+          var ss = document.getElementById('ss'), lblError = document.getElementById('lblError');
+            ss.style.display = 'none';
+            lblError.innerHTML = 'super-select requires the itemlist property to be set as an array with at list one object. Also, the diplayitems property must be set to an array with at least one object of the form [{prop: value}] where value is the property name who\'s values will be used to make up the list';
         },
         //Styles the auto complete input box on click
         searchTxtClick: function (e) {
@@ -435,25 +444,23 @@ See demo/index.html for an example of how to structure the object arrays.
             }
             this._filterBySubject();
         },
+        //check for itemlist requirements***********************************
         _checkItemList: function(){
-            //check for itemlist requirements
-
-            //check if itemlist is an Array
-            console.log(this.itemlist);
+                //check if itemlist is an Array
             console.log(Object.prototype.toString.call(this.itemlist));
-            if(!(Object.prototype.toString.call(this.itemlist) === 'object Array')){
-                console.log('not an array');
-                console.dir(document.getElementById('ss'));
-                document.getElementById('ss').innerHTML = 'super-select "itemlist" property must be an array of objects';
-
+            if(!(Object.prototype.toString.call(this.itemlist) === '[object Array]')){
+                document.getElementById('lblError').innerHTML = 'super-select "itemlist" property must be an array';
+                return;
             }
-           // var test2 = Object.prototype.toString.call(this.itemlist);
-
-            //var test = Object.prototype.toString.call(this.itemlist[0]);
-           // console.log(test2);
-           // console.log(this.itemlist,  this._requirementsMet);
+            if(!(Object.prototype.toString.call(this.itemlist[0]) === '[object Object]')){
+                document.getElementById('lblError').innerHTML = 'super-select "itemlist" property must be an array of OBJECTS';
+            }
+            else{
+                this.style.display = 'block';
+                document.getElementById('lblError').style.display = 'none';
+                document.getElementById('ss').style.display = 'block';
+                }
         }
-
     });
 
 </script>
