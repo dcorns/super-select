@@ -89,7 +89,7 @@ See demo/index.html for an example of how to structure the object arrays.
     </style>
     <template>
         <content></content>
-        <section class="listStyle">
+        <section class="listStyle" id="ss">
             <section id="filters" on-click="filterclicked"></section>
             <input id="searchTxt" on-mouseenter="searchTxtMouseEnter" on-mouseout="searchTxtMouseOut" on-click="searchTxtClick" value="{{searchText::input}}">
             <button id="btnPref" on-click="preferenceBtn">off</button>
@@ -112,8 +112,7 @@ See demo/index.html for an example of how to structure the object arrays.
             itemlist: {
                 type: Array,
                 notify: true,
-                value: [],
-                observer: '_populateList'
+                observer: '_checkItemList'
             },
             //A mapping array containing the property names of the additional data to be displayed when the key data is hovered or selected. It must be configured like this [{appliesTo:(name of the key in itemlist that stores the association array for each item)}, {name:subject, id:id}...]
             associations: {
@@ -166,10 +165,14 @@ See demo/index.html for an example of how to structure the object arrays.
             //This stores the current list of checked subject id's
             filter: {
                 type: Array,
-                value: [],
                 notify: true,
+                value: [],
                 observer: '_filterBySubject'
             }
+        },
+
+        ready: function(){
+          console.dir(window[this.dataset.itemlist]);
         },
         //Styles the auto complete input box on click
         searchTxtClick: function (e) {
@@ -218,89 +221,91 @@ See demo/index.html for an example of how to structure the object arrays.
         },
         //called when filter selection changes and sets the show attribute of the list items based on selected filters and then calls _search
         _filterBySubject: function () {
-            var filter = this.filter, len2 = filter.length;
-            var domItems = document.getElementById('ssul').children;
-            var c = 0, len = domItems.length, showItem = true;
-            for (c; c < len; c++) {
-                if (len2 > 0) {
-                    var subjects = JSON.parse(domItems[c].dataset.subjects);
-                    var c2 = 0;
-                    showItem = false;
-                    for (c2; c2 < len2; c2++) {
-                        if (!(showItem)) {
-                            var c3 = 0, len3 = subjects.length;
-                            for (c3; c3 < len3; c3++) {
-                                if (filter[c2] === subjects[c3].toString()) {
-                                    showItem = true;
-                                    break;
+            if(document.getElementById('ssul')){
+                var filter = this.filter, len2 = filter.length;
+                var domItems = document.getElementById('ssul').children;
+                var c = 0, len = domItems.length, showItem = true;
+                for (c; c < len; c++) {
+                    if (len2 > 0) {
+                        var subjects = JSON.parse(domItems[c].dataset.subjects);
+                        var c2 = 0;
+                        showItem = false;
+                        for (c2; c2 < len2; c2++) {
+                            if (!(showItem)) {
+                                var c3 = 0, len3 = subjects.length;
+                                for (c3; c3 < len3; c3++) {
+                                    if (filter[c2] === subjects[c3].toString()) {
+                                        showItem = true;
+                                        break;
+                                    }
                                 }
                             }
+                            else break;
                         }
-                        else break;
                     }
+                    if (showItem) domItems[c].dataset['show'] = 'true';
+                    else domItems[c].dataset['show'] = 'false';
                 }
-                if (showItem) domItems[c].dataset['show'] = 'true';
-                else domItems[c].dataset['show'] = 'false';
+                this._search(this.searchText);
             }
-            this._search(this.searchText);
         },
         //called by filterBySubject and when the auto complete text changes: Sets the visibilty of list items based on auto complete settings, auto complete text and filter selections
         _search: function (e) {
-            var sf = this.searchFactor, c = 0;
-            var domItems = document.getElementById('ssul').children, len = domItems.length, showItem;
-            if (sf > 0) {
-                var testText = e.toLocaleLowerCase(), itemText;
-                if (sf > 1) {
-                    for (c; c < len; c++) {
-                        showItem = domItems[c].dataset['show'];
-                        if (showItem === 'true') {
-                            itemText = domItems[c].textContent.toLocaleLowerCase();
-                            if (itemText.indexOf(testText) > -1) {
-                                domItems[c].hidden = false;
+            if(document.getElementById('ssul')) {
+                var sf = this.searchFactor, c = 0, domItems = document.getElementById('ssul').children, len = domItems.length, showItem;
+                if (sf > 0) {
+                    var testText = e.toLocaleLowerCase(), itemText;
+                    if (sf > 1) {
+                        for (c; c < len; c++) {
+                            showItem = domItems[c].dataset['show'];
+                            if (showItem === 'true') {
+                                itemText = domItems[c].textContent.toLocaleLowerCase();
+                                if (itemText.indexOf(testText) > -1) {
+                                    domItems[c].hidden = false;
+                                }
+                                else {
+                                    domItems[c].hidden = true;
+                                }
                             }
                             else {
                                 domItems[c].hidden = true;
                             }
                         }
-                        else {
-                            domItems[c].hidden = true;
-                        }
-                    }
-                }
-                else{
-                    var elen = testText.length;
-                    for (c; c < len; c++) {
-                        showItem = domItems[c].dataset['show'];
-                        if (showItem === 'true') {
-                            itemText = domItems[c].textContent.toLocaleLowerCase();
-                            if (itemText.slice(0, elen) === testText) {
-                                domItems[c].hidden = false;
-                            }
-                            else {
-                                domItems[c].hidden = true;
-                            }
-                        }
-                        else {
-                            domItems[c].hidden = true;
-                        }
-                    }
-                }
-            }
-            else {
-                for (c; c < len; c++) {
-                    showItem = domItems[c].dataset['show'];
-                    if (showItem === 'true') {
-                        domItems[c].hidden = false;
                     }
                     else {
-                        domItems[c].hidden = true;
+                        var elen = testText.length;
+                        for (c; c < len; c++) {
+                            showItem = domItems[c].dataset['show'];
+                            if (showItem === 'true') {
+                                itemText = domItems[c].textContent.toLocaleLowerCase();
+                                if (itemText.slice(0, elen) === testText) {
+                                    domItems[c].hidden = false;
+                                }
+                                else {
+                                    domItems[c].hidden = true;
+                                }
+                            }
+                            else {
+                                domItems[c].hidden = true;
+                            }
+                        }
+                    }
+                }
+                else {
+                    for (c; c < len; c++) {
+                        showItem = domItems[c].dataset['show'];
+                        if (showItem === 'true') {
+                            domItems[c].hidden = false;
+                        }
+                        else {
+                            domItems[c].hidden = true;
+                        }
                     }
                 }
             }
         },
         //performs initial element setup
         _populateList: function () {
-            if (this.itemlist.length > 0) {
                 var items = this.itemlist, len = items.length, c = this.lastItemIndex, el, sSDescriptions = document.getElementById('ssdescript'), itemList = document.getElementById('ssul');
                 var titles = this.displayitems;
                 var extraTitles = titles.length > 1;
@@ -369,22 +374,20 @@ See demo/index.html for an example of how to structure the object arrays.
                         sSDescriptions.appendChild(el);
                     }
                 }
-            }
-            else{
-               // this.innerHTML = 'super-select requires the itemlist property to contain an object array';
-            }
+
         },
         //Handles state changes of the search text
         _searchFactorChanged: function () {
             var searchTxt = document.getElementById('searchTxt');
-            if (this.searchFactor > 0) {
-                this._search(searchTxt.value);
+            if(searchTxt) {
+                if (this.searchFactor > 0) {
+                    this._search(searchTxt.value);
+                }
+                else {
+                    searchTxt.value = '';
+                    this._search(searchTxt.value);
+                }
             }
-            else {
-                searchTxt.value = '';
-                this._search(searchTxt.value);
-            }
-
         },
         //Creates the subject filter elements
         _makeFilter: function () {
@@ -431,6 +434,24 @@ See demo/index.html for an example of how to structure the object arrays.
                 }
             }
             this._filterBySubject();
+        },
+        _checkItemList: function(){
+            //check for itemlist requirements
+
+            //check if itemlist is an Array
+            console.log(this.itemlist);
+            console.log(Object.prototype.toString.call(this.itemlist));
+            if(!(Object.prototype.toString.call(this.itemlist) === 'object Array')){
+                console.log('not an array');
+                console.dir(document.getElementById('ss'));
+                document.getElementById('ss').innerHTML = 'super-select "itemlist" property must be an array of objects';
+
+            }
+           // var test2 = Object.prototype.toString.call(this.itemlist);
+
+            //var test = Object.prototype.toString.call(this.itemlist[0]);
+           // console.log(test2);
+           // console.log(this.itemlist,  this._requirementsMet);
         }
 
     });

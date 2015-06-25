@@ -1,12 +1,7 @@
 <!doctype html>
 <!--
 @license
-Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
-This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
-The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
-The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
-Code distributed by Google as part of the polymer project is also
-subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+Copyright (c) 2015 Dale Corns
 -->
 <html>
   <head>
@@ -29,10 +24,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       suite('<super-select>', function() {
 
-        test('defines the "author" property', function() {
-          assert.equal(myEl.author.name, 'Dale Corns');
-          assert.equal(myEl.author.image, 'http://addyosmani.com/blog/wp-content/uploads/2013/04/unicorn.jpg');
-        });
         test('defines the "showAll" property', function(){
           assert.equal(myEl.searchFactor, 0);
         });
@@ -45,27 +36,53 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         test('defines the "lastItemIndex" property', function(){
           assert.equal(myEl.lastItemIndex, 0);
         });
-
-
-        test('says hello', function() {
-          assert.equal(myEl.sayHello(), 'super-select says, Hello World!');
-
-          var greetings = myEl.sayHello('greetings Earthlings');
-          assert.equal(greetings, 'super-select says, greetings Earthlings');
+        test('defines the "itemlist" property', function(){
+          assert.equal(myEl.itemlist.length, 0);
         });
-
-        test('fires lasers', function(done) {
-          myEl.addEventListener('super-select-lasers', function(event) {
-            assert.equal(event.detail.sound, 'Pew pew!');
-            done();
-          });
-          myEl.fireLasers();
+        test('defines the "associations" property', function(){
+          assert.equal(myEl.associations.length, 0);
         });
+        test('defines the "displayitems" property', function(){
+          assert.equal(myEl.displayitems.length, 0);
+        });
+        test('defines the "searchText" property', function(){
+          assert.equal(myEl.searchText, '');
+        });
+        test('defines the "searchFactor" property', function(){
+          assert.equal(myEl.searchFactor, 0);
+        });
+        test('defines the "selectedItem" property', function(){
+          assert.equal(myEl.selectedItem, '');
+        });
+        test('defines the "filter" property', function(){
+          assert.equal(myEl.filter.length, 0);
+        });
+        test('Displays an error when the itemlist array is not valid', function(){
+          myEl.itemlist = [];
+          assert.equal(myEl.innerHTML, 'super-select itemlist property must be set to a valid object array--: [{key:value}]');
+        });
+//        test('associations property change triggers _makeFilter function', function(){
+//          assert.equal(0,1);
+//        });
+//        test('searchText property change triggers _search function', function(){
+//          assert.equal(0,1);
+//        });
 
-          test('adds search text event listeners', function(){
-             myEl.addSearchTextListeners();
+//        test('says hello', function() {
+//          assert.equal(myEl.sayHello(), 'super-select says, Hello World!');
+//
+//          var greetings = myEl.sayHello('greetings Earthlings');
+//          assert.equal(greetings, 'super-select says, greetings Earthlings');
+//        });
 
-          });
+//        test('fires lasers', function(done) {
+//          myEl.addEventListener('super-select-lasers', function(event) {
+//            assert.equal(event.detail.sound, 'Pew pew!');
+//            done();
+//          });
+//          myEl.fireLasers();
+//        });
+
 
       });
     </script>
