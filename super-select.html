@@ -132,7 +132,6 @@ See demo/index.html for an example of how to structure the object arrays.
             displayitems: {
                 type: Array,
                 notify: true,
-                value: []
             },
             //Stores the value attribute of the auto complete
             searchText: {
@@ -447,7 +446,6 @@ See demo/index.html for an example of how to structure the object arrays.
         //check for itemlist requirements***********************************
         _checkItemList: function(){
                 //check if itemlist is an Array
-            console.log(Object.prototype.toString.call(this.itemlist));
             if(!(Object.prototype.toString.call(this.itemlist) === '[object Array]')){
                 document.getElementById('lblError').innerHTML = 'super-select "itemlist" property must be an array';
                 return;
@@ -456,10 +454,36 @@ See demo/index.html for an example of how to structure the object arrays.
                 document.getElementById('lblError').innerHTML = 'super-select "itemlist" property must be an array of OBJECTS';
             }
             else{
-                this.style.display = 'block';
-                document.getElementById('lblError').style.display = 'none';
-                document.getElementById('ss').style.display = 'block';
+                if(this._checkDisplayItems()){
+                    this.style.display = 'block';
+                    document.getElementById('lblError').style.display = 'none';
+                    document.getElementById('ss').style.display = 'block';
+                    this._populateList();
                 }
+                }
+        },
+        _checkDisplayItems: function(){
+            //check if displayItems is an array
+            if(!(Object.prototype.toString.call(this.displayitems) === '[object Array]')){
+                document.getElementById('lblError').innerHTML = 'super-select "displayitems" property must be an array';
+                return;
+            }
+            if(!(Object.prototype.toString.call(this.displayitems[0]) === '[object Object]')){
+                document.getElementById('lblError').innerHTML = 'super-select "displayitems" property must be an array of OBJECTS who\'s first object is of the form {prop: value} where value is the itemlist property name representing the value to be used for the selection list';
+                return;
+            }
+            if(!(this.displayitems[0].hasOwnProperty('prop'))){
+                document.getElementById('lblError').innerHTML = 'super-select "displayitems" property must be an array of objects who\'s FIRST OBJECT IS OF THE FORM {prop: value} where value is the itemlist property name representing the value to be used for the selection list';
+                return;
+            }
+            var test = this.itemlist[0].hasOwnProperty(this.displayitems[0]['prop']);
+            console.log(test);
+            if(!(this.itemlist[0].hasOwnProperty(this.displayitems[0]['prop']))){
+                document.getElementById('lblError').innerHTML = 'super-select "displayitems" property must be an array of objects who\'s first object is of the form {prop: value} where value is the ITEM LIST PROPERTY NAME representing the value to be used for the selection list. Item list does not contain the property ' + this.displayitems[0]['prop'];
+            }
+            else{
+                return true;
+            }
         }
     });
 
