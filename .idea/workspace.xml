@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="6273cd24-0774-47f0-8b00-9a70c30cd3d2" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/demo/index.html" afterPath="$PROJECT_DIR$/demo/index.html" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/super-select.html" afterPath="$PROJECT_DIR$/super-select.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="super-select.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -73,8 +73,8 @@
       <file leaf-file-name="super-select.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/super-select.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="3.4814816">
-              <caret line="480" column="81" selection-start-line="480" selection-start-column="81" selection-end-line="480" selection-end-column="81" />
+            <state vertical-scroll-proportion="10.148149">
+              <caret line="456" column="46" selection-start-line="456" selection-start-column="46" selection-end-line="456" selection-end-column="46" />
               <folding>
                 <element signature="e#4949#7762#0" expanded="true" />
                 <element signature="e#5257#5374#0" expanded="true" />
@@ -105,7 +105,7 @@
                 <element signature="e#18060#18427#0" expanded="true" />
                 <element signature="e#18508#19744#0" expanded="true" />
                 <element signature="e#19829#20410#0" expanded="true" />
-                <element signature="e#20523#21405#0" expanded="true" />
+                <element signature="e#21441#24550#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -124,11 +124,9 @@
       <file leaf-file-name="index.html" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/demo/index.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.7194805">
-              <caret line="44" column="78" selection-start-line="44" selection-start-column="78" selection-end-line="44" selection-end-column="78" />
-              <folding>
-                <element signature="e#728#2853#0" expanded="true" />
-              </folding>
+            <state vertical-scroll-proportion="-0.49610388">
+              <caret line="27" column="34" selection-start-line="27" selection-start-column="34" selection-end-line="27" selection-end-column="34" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -254,9 +252,9 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-1" y="27" width="1368" height="742" extended-state="6" />
-    <editor active="false" />
+    <editor active="true" />
     <layout>
-      <window_info id="Terminal" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.21535893" sideWeight="0.48784193" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.21535893" sideWeight="0.48784193" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32888147" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="right" auto_hide="true" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25683892" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="15" side_tool="false" content_ui="tabs" />
@@ -373,7 +371,7 @@
             <element signature="e#18060#18427#0" expanded="true" />
             <element signature="e#18508#19744#0" expanded="true" />
             <element signature="e#19829#20410#0" expanded="true" />
-            <element signature="e#20523#21405#0" expanded="true" />
+            <element signature="e#21441#24550#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -452,7 +450,7 @@
             <element signature="e#18060#18427#0" expanded="true" />
             <element signature="e#18508#19744#0" expanded="true" />
             <element signature="e#19829#20410#0" expanded="true" />
-            <element signature="e#20523#21405#0" expanded="true" />
+            <element signature="e#21441#24550#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -509,7 +507,7 @@
             <element signature="e#18060#18427#0" expanded="true" />
             <element signature="e#18508#19744#0" expanded="true" />
             <element signature="e#19829#20410#0" expanded="true" />
-            <element signature="e#20523#21405#0" expanded="true" />
+            <element signature="e#21441#24550#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -562,7 +560,7 @@
             <element signature="e#18060#18427#0" expanded="true" />
             <element signature="e#18508#19744#0" expanded="true" />
             <element signature="e#19829#20410#0" expanded="true" />
-            <element signature="e#20523#21405#0" expanded="true" />
+            <element signature="e#21441#24550#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -615,7 +613,7 @@
             <element signature="e#18060#18427#0" expanded="true" />
             <element signature="e#18508#19744#0" expanded="true" />
             <element signature="e#19829#20410#0" expanded="true" />
-            <element signature="e#20523#21405#0" expanded="true" />
+            <element signature="e#21441#24550#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -668,7 +666,7 @@
             <element signature="e#18060#18427#0" expanded="true" />
             <element signature="e#18508#19744#0" expanded="true" />
             <element signature="e#19829#20410#0" expanded="true" />
-            <element signature="e#20523#21405#0" expanded="true" />
+            <element signature="e#21441#24550#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -721,7 +719,7 @@
             <element signature="e#18060#18427#0" expanded="true" />
             <element signature="e#18508#19744#0" expanded="true" />
             <element signature="e#19829#20410#0" expanded="true" />
-            <element signature="e#20523#21405#0" expanded="true" />
+            <element signature="e#21441#24550#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -774,7 +772,7 @@
             <element signature="e#18060#18427#0" expanded="true" />
             <element signature="e#18508#19744#0" expanded="true" />
             <element signature="e#19829#20410#0" expanded="true" />
-            <element signature="e#20523#21405#0" expanded="true" />
+            <element signature="e#21441#24550#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -850,8 +848,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/super-select.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="3.4814816">
-          <caret line="480" column="81" selection-start-line="480" selection-start-column="81" selection-end-line="480" selection-end-column="81" />
+        <state vertical-scroll-proportion="10.148149">
+          <caret line="456" column="46" selection-start-line="456" selection-start-column="46" selection-end-line="456" selection-end-column="46" />
           <folding>
             <element signature="e#4949#7762#0" expanded="true" />
             <element signature="e#5257#5374#0" expanded="true" />
@@ -882,18 +880,16 @@
             <element signature="e#18060#18427#0" expanded="true" />
             <element signature="e#18508#19744#0" expanded="true" />
             <element signature="e#19829#20410#0" expanded="true" />
-            <element signature="e#20523#21405#0" expanded="true" />
+            <element signature="e#21441#24550#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/demo/index.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.7194805">
-          <caret line="44" column="78" selection-start-line="44" selection-start-column="78" selection-end-line="44" selection-end-column="78" />
-          <folding>
-            <element signature="e#728#2853#0" expanded="true" />
-          </folding>
+        <state vertical-scroll-proportion="-0.49610388">
+          <caret line="27" column="34" selection-start-line="27" selection-start-column="34" selection-end-line="27" selection-end-column="34" />
+          <folding />
         </state>
       </provider>
     </entry>

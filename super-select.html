@@ -460,26 +460,46 @@ See demo/index.html for an example of how to structure the object arrays.
                     document.getElementById('ss').style.display = 'block';
                     this._populateList();
                 }
-                }
+            }
         },
         _checkDisplayItems: function(){
             //check if displayItems is an array
             if(!(Object.prototype.toString.call(this.displayitems) === '[object Array]')){
                 document.getElementById('lblError').innerHTML = 'super-select "displayitems" property must be an array';
-                return;
+                console.error('there is no display items array');
+                return false;
             }
             if(!(Object.prototype.toString.call(this.displayitems[0]) === '[object Object]')){
                 document.getElementById('lblError').innerHTML = 'super-select "displayitems" property must be an array of OBJECTS who\'s first object is of the form {prop: value} where value is the itemlist property name representing the value to be used for the selection list';
-                return;
+                console.error('no Objects in display items array');
+                return false;
             }
             if(!(this.displayitems[0].hasOwnProperty('prop'))){
                 document.getElementById('lblError').innerHTML = 'super-select "displayitems" property must be an array of objects who\'s FIRST OBJECT IS OF THE FORM {prop: value} where value is the itemlist property name representing the value to be used for the selection list';
-                return;
+                console.error('displayitems[0] has no prop property');
+                return false;
             }
-            var test = this.itemlist[0].hasOwnProperty(this.displayitems[0]['prop']);
-            console.log(test);
             if(!(this.itemlist[0].hasOwnProperty(this.displayitems[0]['prop']))){
                 document.getElementById('lblError').innerHTML = 'super-select "displayitems" property must be an array of objects who\'s first object is of the form {prop: value} where value is the ITEM LIST PROPERTY NAME representing the value to be used for the selection list. Item list does not contain the property ' + this.displayitems[0]['prop'];
+                console.error('property name' + this.displayitems[0]['prop'] + 'defined in displayitems not found in itemlist');
+                return false;
+            }
+            var len = this.displayitems.length;
+            if(len > 1){
+                var c = 1;
+                for (c; c < len; c++){
+                    if(!(this.displayitems[c].hasOwnProperty('prop'))  || !(this.displayitems[c].hasOwnProperty('tag'))){
+                        document.getElementById('lblError').innerHTML = 'super-select displayitems properties that follow the first one must all be of the form{prop: value, tag: value}';
+                        console.error('displayitems object[' + c + '] does not have required properties {prop: value, tag: value}');
+                        return false;
+                    }
+                    if(!(this.itemlist[0].hasOwnProperty(this.displayitems[c]['prop']))){
+                        document.getElementById('lblError').innerHTML = 'super-select itemlist has no property: ' + this.displayitems[0]['prop'];
+                        console.error('no property ' + this.displayitems[c]['prop'] + 'in itemlist');
+                        return false;
+                    }
+                            }
+                return true;
             }
             else{
                 return true;
