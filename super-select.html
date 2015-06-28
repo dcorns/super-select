@@ -173,7 +173,7 @@ See demo/index.html for an example of how to structure the object arrays.
                 type: Array,
                 notify: true,
                 value: [],
-                observer: '_filterBySubject'
+                observer: '_checkAssociations'
             }
         },
 
@@ -512,6 +512,11 @@ See demo/index.html for an example of how to structure the object arrays.
             else{
                 return true;
             }
+        },
+        _checkAssociations: function(){
+            //check for subject array in itemlist properties
+            //check associations array
+            this._makeFilter();
         }
     });
 
