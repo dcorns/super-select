@@ -94,7 +94,7 @@ See demo/index.html for an example of how to structure the object arrays.
 
     </style>
     <template>
-        <lable id="lblError"></lable>
+        <label id="lblError"></label>
         <content></content>
         <section class="listStyle" id="ss">
             <section id="filters" on-click="filterclicked"></section>
@@ -497,6 +497,14 @@ See demo/index.html for an example of how to structure the object arrays.
                         document.getElementById('lblError').innerHTML = 'super-select itemlist has no property: ' + this.displayitems[0]['prop'];
                         console.error('no property ' + this.displayitems[c]['prop'] + 'in itemlist');
                         return false;
+                    }
+                    var c2 = 0, len2 = this.itemlist.length;
+                    for(c2; c2 < len2; c2++){
+                        if(!(this.itemlist[c2].hasOwnProperty(this.displayitems[c]['prop']))){
+                            document.getElementById('lblError').innerHTML = 'super-select itemlist[' + c2 + '] has no property called ' + this.displayitems[c]['prop'];
+                            console.error('itemlist[' + c2 + ' has no property ' + this.displayitems[c]['prop']);
+                            return false;
+                        }
                     }
                             }
                 return true;
